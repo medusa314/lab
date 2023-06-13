@@ -1,14 +1,37 @@
 version: 2.1
+
 orbs:
   go: circleci/go@1.7.3
   gcp-gke: circleci/gcp-gke@0.1.0
   gcp-gcr: circleci/gcp-gcr@0.15
+  shellcheck: circleci/shellcheck@3.1.2 # https://circleci.com/developer/orbs/orb/circleci/shellcheck
   
  global_context: &global_context
   context:
     - global_gar_vars   # for google artifact registry
     
 jobs:
+  shellcheck:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - shellcheck/install
+      - shellcheck/check:
+          dir: ./
+          ignore-dirs: |
+            ./.git
+            
+  test:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - run:
+          command: |
+            #!/bin/bash
+
+            echo "You are expected to implement the proper tests for their repositories."
+            exit 1
+            
   build-and-push:
     executor: gcp-gcr/default
     steps:
@@ -65,9 +88,15 @@ jobs:
           container: cfspeedtest-dev
           image: cfspeedtest-dev/${CIRCLE_PROJECT_REPONAME}:v2 # change version when updating
 workflows:
-  build_update_deploy:
+  test-build-deploy:
     jobs:
-      - build-and-push
+      - shellcheck
+      - test
+      - build-and-push:
+          context: global_gar_vars
+          requires:
+            - shellcheck
+            - test
       - deploy:
           requires:
             - build-and-push
