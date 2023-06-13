@@ -85,16 +85,16 @@ jobs:
           components: gke-gcloud-auth-plugin kubectl
           version: 424.0.0
       - run:
-      command: >
-        set -x
+          command: >
+            set -x
 
-        project_id_var_name=GOOGLE_PROJECT_ID
+            project_id_var_name=GOOGLE_PROJECT_ID
 
-        gcloud auth configure-docker --quiet --project "${!project_id_var_name}"
-        us-east1-docker.pkg.dev
+            gcloud auth configure-docker --quiet --project "${!project_id_var_name}"
+            us-east1-docker.pkg.dev
 
-        set +x
-      name: Configure Docker to use gcloud as a credential helper
+            set +x
+          name: Configure Docker to use gcloud as a credential helper
       - gcp-gke/update-kubeconfig-with-credentials:
           cluster: ng-dev-cluster-1
           additional_args: --region=us-east1
