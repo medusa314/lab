@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   go: circleci/go@1.7.3
-  gcp-gke: circleci/gcp-gke@0.1.0
+  gcp-gke: circleci/gcp-gke@2.1.0
   gcp-gcr: circleci/gcp-gcr@0.15
   shellcheck: circleci/shellcheck@3.1.2 # https://circleci.com/developer/orbs/orb/circleci/shellcheck
   
@@ -83,9 +83,12 @@ jobs:
       - gcp-gke/init
       # Update a deployment Docker image.
       - gcp-gke/rollout-image:
-          deployment: ng-dev-cluster-1
+          cluster: ng-dev-cluster-1
+          deployment: lab
           container: cfspeedtest-dev
-          image: us-east1-docker.pkg.dev/vpc-dev-31480/lab/cfspeedtest:latest # change version when updating
+          image: lab/cfspeedtest 
+          registry_url: us-east1-docker.pkg.dev
+          namespace: lab
 workflows:
   test-build-deploy:
     jobs:
