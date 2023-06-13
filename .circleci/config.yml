@@ -32,97 +32,75 @@ jobs:
 
             echo "You are expected to implement the proper tests for their repositories."
             
-#   build-and-push:
-#     executor: gcp-gcr/default
-#     steps:
-#       - checkout
-#       - gcp-gcr/gcr-auth:
-#           registry-url: us-east1-docker.pkg.dev
-#       - gcp-gcr/build-image:
-#           image: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest
-#           tag: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
-#           no_output_timeout: 20m
-#           registry-url: us-east1-docker.pkg.dev
-#       - run:
-#           command: |
-#             #!/bin/bash
+  build-and-push:
+    executor: gcp-gcr/default
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth:
+          registry-url: us-east1-docker.pkg.dev
+      - gcp-gcr/build-image:
+          image: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest
+          tag: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
+          no_output_timeout: 20m
+          registry-url: us-east1-docker.pkg.dev
+      - run:
+          command: |
+            #!/bin/bash
 
-#             IFS="," read -ra DOCKER_TAGS \<<< "$ORB_EVAL_TAG"
-#             PROJECT_ID="${!ORB_ENV_PROJECT_ID}"
-#             ORB_VAL_IMAGE=$(eval echo "$ORB_VAL_IMAGE")
+            IFS="," read -ra DOCKER_TAGS \<<< "$ORB_EVAL_TAG"
+            PROJECT_ID="${!ORB_ENV_PROJECT_ID}"
+            ORB_VAL_IMAGE=$(eval echo "$ORB_VAL_IMAGE")
 
-#             for tag_to_eval in "${DOCKER_TAGS[@]}"; do
-#                 TAG=$(eval echo "$tag_to_eval")
-#                 docker push "$ORB_VAL_REGISTRY_URL/$PROJECT_ID/$ORB_VAL_IMAGE:$TAG"
-#             done
+            for tag_to_eval in "${DOCKER_TAGS[@]}"; do
+                TAG=$(eval echo "$tag_to_eval")
+                docker push "$ORB_VAL_REGISTRY_URL/$PROJECT_ID/$ORB_VAL_IMAGE:$TAG"
+            done
 
-#             if [ -n "$ORB_VAL_DIGEST_PATH" ]; then
-#                 mkdir -p "$(dirname "$ORB_VAL_DIGEST_PATH")"
-#                 SAMPLE_FIRST=$(eval echo "${DOCKER_TAGS[0]}")
-#                 docker image inspect --format="{{index .RepoDigests 0}}" "$ORB_VAL_REGISTRY_URL/$PROJECT_ID/$ORB_VAL_IMAGE:$SAMPLE_FIRST" > "$ORB_VAL_DIGEST_PATH"
-#             fi
+            if [ -n "$ORB_VAL_DIGEST_PATH" ]; then
+                mkdir -p "$(dirname "$ORB_VAL_DIGEST_PATH")"
+                SAMPLE_FIRST=$(eval echo "${DOCKER_TAGS[0]}")
+                docker image inspect --format="{{index .RepoDigests 0}}" "$ORB_VAL_REGISTRY_URL/$PROJECT_ID/$ORB_VAL_IMAGE:$SAMPLE_FIRST" > "$ORB_VAL_DIGEST_PATH"
+            fi
 
-#           environment:
-#             ORB_ENV_PROJECT_ID: GOOGLE_PROJECT_ID
-#             ORB_EVAL_TAG: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
-#             ORB_VAL_DIGEST_PATH: /tmp/digest.txt
-#             ORB_VAL_IMAGE: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest
-#             ORB_VAL_REGISTRY_URL: us-east1-docker.pkg.dev
-#           name: Push image to GAR
-#       - run:
-#           command: |
-#             echo "Digest is: $(</tmp/digest.txt)"
+          environment:
+            ORB_ENV_PROJECT_ID: GOOGLE_PROJECT_ID
+            ORB_EVAL_TAG: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
+            ORB_VAL_DIGEST_PATH: /tmp/digest.txt
+            ORB_VAL_IMAGE: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest
+            ORB_VAL_REGISTRY_URL: us-east1-docker.pkg.dev
+          name: Push image to GAR
+      - run:
+          command: |
+            echo "Digest is: $(</tmp/digest.txt)"
     
-#   deploy:
-#     description: Deploy application to Google Kubernetes Engine
-#     machine: true
-#     steps:
-#       - checkout
-#       # Install `gcloud` and `kubectl` if not already installed.
-#       - gcp-cli/install:
-# 	        components: kubectl
-# #       - gcp-gke/install
-# #       # Initialize the `gcloud` CLI.
-# #       - gcp-gke/init
-#       # Update a deployment Docker image.
-#       - gcp-gke/rollout-image:
-#           deployment: lab
-#           container: cfspeedtest-dev
-#           image: us-east1-docker.pkg.dev/vpc-dev-31480/lab/cfspeedtest 
-#           namespace: lab
-
-  publish-deploy:
+  deploy:
     description: Deploy application to Google Kubernetes Engine
     machine: true
     steps:
       - checkout
       # Install `gcloud` and `kubectl` if not already installed.
       - gcp-cli/install:
-          components: kubectl
+	        components: kubectl
+#       - gcp-gke/install
+#       # Initialize the `gcloud` CLI.
+#       - gcp-gke/init
       # Update a deployment Docker image.
-      - gcp-gke/publish-and-rollout-image:
+      - gcp-gke/rollout-image:
           deployment: lab
           container: cfspeedtest-dev
-          image: lab/cfspeedtest 
+          image: us-east1-docker.pkg.dev/vpc-dev-31480/lab/cfspeedtest 
           namespace: lab
-          cluster: ng-dev-cluster-1
-          registry_url: us-east1-docker.pkg.dev
 
 workflows:
   test-build-deploy:
     jobs:
       - shellcheck
       - test
-      - publish-deploy:
+      - build-and-push:
           context: global_gar_vars
           requires:
             - shellcheck
             - test
-#       - build-and-push:
-#           context: global_gar_vars
-#           requires:
-#             - shellcheck
-#             - test
-#       - deploy:
-#           requires:
-#             - build-and-push
+      - deploy:
+          requires:
+            - build-and-push
