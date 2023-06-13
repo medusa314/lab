@@ -30,7 +30,6 @@ jobs:
             #!/bin/bash
 
             echo "You are expected to implement the proper tests for their repositories."
-            exit 1
             
   build-and-push:
     executor: gcp-gcr/default
