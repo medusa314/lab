@@ -79,11 +79,11 @@ jobs:
     steps:
       - checkout
       # Install `gcloud` and `kubectl` if not already installed.
-      - gcp-cli/install:
-          components: kubectl
-#       - gcp-gke/install
-#       # Initialize the `gcloud` CLI.
-#       - gcp-gke/init
+#       - gcp-cli/install:
+#           components: kubectl
+      - gcp-gke/install
+      # Initialize the `gcloud` CLI.
+      - gcp-gke/init
       # Update a deployment Docker image.
       - gcp-gke/rollout-image:
           deployment: lab
