@@ -31,7 +31,15 @@ jobs:
             #!/bin/bash
 
             echo "You are expected to implement the proper tests for their repositories."
-            
+
+  credentials:
+    description: Deploy application to Google Kubernetes Engine
+    executor: gcp-gke/default
+    steps:
+      - gcp-gke/update-kubeconfig-with-credentials:
+          cluster: ng-dev-cluster-1
+          additional_args: region
+
 #   build-and-push:
 #     executor: gcp-gcr/default
 #     steps:
@@ -100,6 +108,7 @@ workflows:
     jobs:
       - shellcheck
       - test
+      - credentials
       - gcp-gke/publish-and-rollout-image:
           cluster: ng-dev-cluster-1
           container: cfspeedtest-app
