@@ -41,7 +41,7 @@ jobs:
           image: vpc-dev-31480/${CIRCLE_PROJECT_REPONAME}
           tag: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
           no_output_timeout: 20m
-          registry-url: 
+          registry-url: us-east1-docker.pkg.dev
       - run:
           command: |
             #!/bin/bash
