@@ -83,9 +83,9 @@ jobs:
       - gcp-gke/init
       # Update a deployment Docker image.
       - gcp-gke/rollout-image:
-          deployment: GKE_CLUSTER
+          deployment: ng-dev-cluster-1
           container: cfspeedtest-dev
-          image: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest:latest # change version when updating
+          image: us-east1-docker.pkg.dev/vpc-dev-31480/${CIRCLE_PROJECT_REPONAME}/cfspeedtest:latest # change version when updating
 workflows:
   test-build-deploy:
     jobs:
