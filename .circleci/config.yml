@@ -36,12 +36,12 @@ jobs:
     steps:
       - checkout
       - gcp-gcr/gcr-auth:
-          registry-url: us-east4-docker.pkg.dev
+          registry-url: us-east1-docker.pkg.dev
       - gcp-gcr/build-image:
-          image: cfspeedtest-dev/${CIRCLE_PROJECT_REPONAME}
+          image: vpc-dev-31480/${CIRCLE_PROJECT_REPONAME}
           tag: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
           no_output_timeout: 20m
-          registry-url: us-east4-docker.pkg.dev
+          registry-url: 
       - run:
           command: |
             #!/bin/bash
@@ -65,8 +65,8 @@ jobs:
             ORB_ENV_PROJECT_ID: GOOGLE_PROJECT_ID
             ORB_EVAL_TAG: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
             ORB_VAL_DIGEST_PATH: /tmp/digest.txt
-            ORB_VAL_IMAGE: cfspeedtest-dev/${CIRCLE_PROJECT_REPONAME}
-            ORB_VAL_REGISTRY_URL: us-east4-docker.pkg.dev
+            ORB_VAL_IMAGE: vpc-dev-31480/${CIRCLE_PROJECT_REPONAME}
+            ORB_VAL_REGISTRY_URL: us-east1-docker.pkg.dev
           name: Push image to GAR
       - run:
           command: |
