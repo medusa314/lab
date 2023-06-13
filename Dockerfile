@@ -2,14 +2,16 @@
 
 FROM golang:1.19
 
-WORKDIR /app
+WORKDIR /app/cfspeedtest
 
-COPY go.mod go.sum main.go ./
+COPY go.mod go.sum .
 RUN go mod download
-COPY speedtest/ stats/ timeCalculations/ /usr/local/go/src/cfspeedtest/
-RUN echo "ls -l /usr/local/go/src/cfspeedtest/"
+COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /cfspeedtest main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o cfspeedtest main.go
+
+FROM alpine:latest
+COPY --from=builder /app/cfspeedtest/cfspeedtest ./
 
 # Run
-CMD ["/cfspeedtest"]
+CMD ["./cfspeedtest"]
