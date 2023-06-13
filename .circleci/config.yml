@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   go: circleci/go@1.7.3
-  gcp-gke: circleci/gcp-gke@2.1.0
+  gcp-gke: circleci/gcp-gke@3.0
   gcp-gcr: circleci/gcp-gcr@0.15
   shellcheck: circleci/shellcheck@3.1.2 # https://circleci.com/developer/orbs/orb/circleci/shellcheck
   gcp-cli: circleci/gcp-cli@3.1.0
