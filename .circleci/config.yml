@@ -77,7 +77,7 @@ jobs:
     
   deploy:
     description: Deploy application to Google Kubernetes Engine
-    executor: gcp-gke/default
+    machine: true
     steps:
       - checkout
       # Install `gcloud` and `kubectl` if not already installed.
