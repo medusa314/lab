@@ -105,8 +105,8 @@ jobs:
           container: cfspeedtest-dev
           image: lab/cfspeedtest 
           namespace: lab
-	  cluster: ng-dev-cluster-1
-	  registry_url: us-east1-docker.pkg.dev
+          cluster: ng-dev-cluster-1
+          registry_url: us-east1-docker.pkg.dev
 
 workflows:
   test-build-deploy:
