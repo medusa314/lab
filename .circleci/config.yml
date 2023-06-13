@@ -38,7 +38,7 @@ jobs:
       - gcp-gcr/gcr-auth:
           registry-url: us-east1-docker.pkg.dev
       - gcp-gcr/build-image:
-          image: cfspeedtest
+          image: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest
           tag: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
           no_output_timeout: 20m
           registry-url: us-east1-docker.pkg.dev
@@ -65,7 +65,7 @@ jobs:
             ORB_ENV_PROJECT_ID: GOOGLE_PROJECT_ID
             ORB_EVAL_TAG: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
             ORB_VAL_DIGEST_PATH: /tmp/digest.txt
-            ORB_VAL_IMAGE: cfspeedtest
+            ORB_VAL_IMAGE: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest
             ORB_VAL_REGISTRY_URL: us-east1-docker.pkg.dev
           name: Push image to GAR
       - run:
@@ -85,7 +85,7 @@ jobs:
       - gcp-gke/rollout-image:
           deployment: GKE_CLUSTER
           container: cfspeedtest-dev
-          image: cfspeedtest:v2 # change version when updating
+          image: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest:latest # change version when updating
 workflows:
   test-build-deploy:
     jobs:
