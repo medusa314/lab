@@ -6,9 +6,7 @@ WORKDIR /app
 
 COPY go.mod go.sum main.go ./
 RUN go mod download
-COPY speedtest/ GOPATH
-COPY stats/ GOPATH
-COPY timeCalculations/ GOPATH
+COPY speedtest/ stats/ timeCalculations/ /usr/local/go/src/cfspeedtest/
 RUN echo "ls $GOPATH"
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /cfspeedtest main.go
