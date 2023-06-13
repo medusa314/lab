@@ -83,11 +83,9 @@ jobs:
 #       - gcp-gke/init
       # Update a deployment Docker image.
       - gcp-gke/rollout-image:
-          cluster: ng-dev-cluster-1
           deployment: lab
           container: cfspeedtest-dev
-          image: lab/cfspeedtest 
-          registry_url: us-east1-docker.pkg.dev
+          image: us-east1-docker.pkg.dev/vpc-dev-31480/lab/cfspeedtest 
           namespace: lab
 workflows:
   test-build-deploy:
