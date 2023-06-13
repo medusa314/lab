@@ -3,10 +3,11 @@
 FROM golang:1.19
 
 WORKDIR /app
-ENV GOPATH /app
-COPY go.mod go.sum ./
+
+COPY go.mod go.sum main.go ./
 RUN go mod download
-COPY * ./
+COPY speedtest/ stats/ timeCalculations/ GOPATH
+
 RUN CGO_ENABLED=0 GOOS=linux go build -o /cfspeedtest main.go
 
 # Run
