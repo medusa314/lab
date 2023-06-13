@@ -80,7 +80,7 @@ jobs:
       - checkout
       # Install `gcloud` and `kubectl` if not already installed.
       - gcp-cli/install:
-	        components: kubectl
+          components: kubectl
 #       - gcp-gke/install
 #       # Initialize the `gcloud` CLI.
 #       - gcp-gke/init
