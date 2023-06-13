@@ -36,6 +36,9 @@ jobs:
     description: Deploy application to Google Kubernetes Engine
     executor: gcp-gke/default
     steps:
+      - gcp-cli/install:
+          components: kubectl
+          version: 424.0.0
       - gcp-gke/update-kubeconfig-with-credentials:
           cluster: ng-dev-cluster-1
           additional_args: region
