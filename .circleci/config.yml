@@ -6,10 +6,6 @@ orbs:
   gcp-gcr: circleci/gcp-gcr@0.15
   shellcheck: circleci/shellcheck@3.1.2 # https://circleci.com/developer/orbs/orb/circleci/shellcheck
   gcp-cli: circleci/gcp-cli@3.1.0
-  
-global_context: &global_context
-  context:
-    - global_gar_vars   # for google artifact registry
     
 jobs:
   shellcheck:
@@ -27,11 +23,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: |
-            #!/bin/bash
-
-            echo "You are expected to implement the proper tests for their repositories."
-
+          command: go test -v
 
 
   build-and-push:
@@ -42,7 +34,7 @@ jobs:
           registry-url: us-east1-docker.pkg.dev
       - gcp-gcr/build-image:
           image: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest
-          tag: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
+          tag: ${CIRCLE_BRANCH},latest
           no_output_timeout: 20m
           registry-url: us-east1-docker.pkg.dev
       - run:
@@ -66,7 +58,7 @@ jobs:
 
           environment:
             ORB_ENV_PROJECT_ID: GOOGLE_PROJECT_ID
-            ORB_EVAL_TAG: ${CIRCLE_SHA1},${CIRCLE_SHA1:0:7},${CIRCLE_BRANCH},latest
+            ORB_EVAL_TAG: ${CIRCLE_BRANCH},latest
             ORB_VAL_DIGEST_PATH: /tmp/digest.txt
             ORB_VAL_IMAGE: ${CIRCLE_PROJECT_REPONAME}/cfspeedtest
             ORB_VAL_REGISTRY_URL: us-east1-docker.pkg.dev
