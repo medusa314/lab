@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.19.0-alpine as builder
+FROM golang:1.22.11-alpine as builder
 
 WORKDIR /app/cfspeedtest
 
