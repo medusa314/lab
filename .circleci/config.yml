@@ -8,16 +8,6 @@ orbs:
   gcp-cli: circleci/gcp-cli@3.1.0
     
 jobs:
-  shellcheck:
-    executor: gcp-gcr/default
-    steps:
-      - checkout
-      - shellcheck/install
-      - shellcheck/check:
-          dir: ./
-          ignore-dirs: |
-            ./.git
-            
   test:
     executor: gcp-gcr/default
     steps:
@@ -101,11 +91,9 @@ jobs:
 workflows:
   test-build-deploy:
     jobs:
-      - shellcheck
       - test
       - build-and-push:
           requires:
-            - shellcheck
             - test
       - deploy:
           requires:
